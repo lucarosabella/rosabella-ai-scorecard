@@ -2,7 +2,7 @@ const {rows,snapshots,extractedAt}=window.SCORECARD_DATA;
 const fmt=n=>new Intl.NumberFormat().format(Math.round(n));
 const pct=(a,b)=>b?100*a/b:0;
 const dateLabel=s=>new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-const dur=ms=>{if(ms==null)return 'N/A';if(ms<60000)return Math.round(ms/1000)+'s';if(ms<3600000)return Math.round(ms/60000)+'m';let h=Math.floor(ms/3600000),m=Math.round(ms%3600000/60000);return `${h}h ${m}m`};
+const dur=ms=>{if(ms==null)return 'N/A';if(ms<60000)return Math.round(ms/1000)+'s';if(ms<3600000)return Math.round(ms/60000)+'m';let total=Math.round(ms/60000),h=Math.floor(total/60),m=total%60;return `${h}h ${m}m`};
 let shareChart,csatChart;
 const from=document.querySelector('#from'),to=document.querySelector('#to');from.value='2026-09-10';to.value='2026-09-16';
 function aggregate(selected){const sum=(c,m)=>selected.reduce((a,r)=>a+r[`${c}_${m}`],0), weighted=(c,m,count)=>{let n=sum(c,count);return n?selected.reduce((a,r)=>a+r[`${c}_${m}`]*r[`${c}_${count}`],0)/n:null};let x={};for(const c of ['ai','human','all'])x[c]={messages_sent:sum(c,'messages_sent'),closed_conversations_all:sum(c,'closed_conversations_all'),csat_score:weighted(c,'csat_score','csat_score_count')};return x}
